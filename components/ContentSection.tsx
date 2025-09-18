@@ -19,9 +19,10 @@ type Props = {
   title: string
   items: ContentItem[]
   viewAllHref: string
+  icon?: string
 }
 
-export default function ContentSection({ title, items, viewAllHref }: Props) {
+export default function ContentSection({ title, items, viewAllHref, icon }: Props) {
   const [scrollPosition, setScrollPosition] = useState(0)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -53,8 +54,11 @@ export default function ContentSection({ title, items, viewAllHref }: Props) {
       {/* Section Header */}
       <div className="flex items-center justify-between mb-6 px-4">
         <div className="flex items-center gap-3">
-          <div className="w-1 h-8 bg-blue-600 rounded-full" />
-          <h2 className="text-2xl font-bold text-white">{title}</h2>
+          <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full" />
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            {icon && <span className="text-2xl">{icon}</span>}
+            {title}
+          </h2>
         </div>
         <Link
           href={viewAllHref as any}

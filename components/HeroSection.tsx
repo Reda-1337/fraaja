@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Play, Star, Calendar, Info, ChevronLeft, ChevronRight, Pause, Volume2, VolumeX } from 'lucide-react'
 
 type HeroItem = {
   id: number
@@ -24,6 +25,8 @@ type Props = {
 export default function HeroSection({ items }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
 
   const heroItems = items.slice(0, 5) // Show top 5 trending items
 
