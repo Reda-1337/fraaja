@@ -25,7 +25,7 @@ export default function TestSearchPage() {
       console.log('📊 Results set:', data.results?.length || 0, 'items')
     } catch (error) {
       console.error('❌ Test search failed:', error)
-      alert(`Search test failed: ${error.message}`)
+      alert(`Search test failed: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setIsTesting(false)
     }

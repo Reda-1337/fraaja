@@ -57,7 +57,7 @@ export default function DebugSearch() {
         setResults([])
       }
     } catch (error) {
-      addLog(`Error occurred: ${error.message}`)
+      addLog(`Error occurred: ${error instanceof Error ? error.message : String(error)}`)
       setResults([])
     } finally {
       setIsSearching(false)

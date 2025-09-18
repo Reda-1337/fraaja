@@ -41,7 +41,7 @@ export default function TestSearchUI() {
         setResults([])
       }
     } catch (error) {
-      addLog(`💥 Error: ${error.message}`)
+      addLog(`💥 Error: ${error instanceof Error ? error.message : String(error)}`)
       setResults([])
     } finally {
       setLoading(false)
