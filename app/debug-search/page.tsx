@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 export default function DebugSearch() {
   const [logs, setLogs] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState<any[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
   const addLog = (message: string) => {

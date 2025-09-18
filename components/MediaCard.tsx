@@ -19,7 +19,7 @@ export default function MediaCard({ id, title, posterPath, year, rating, mediaTy
     : `/watch/tv/${id}/1/1`
   
       return (
-        <Link href={watchHref} className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-xl">
+        <Link href={watchHref as any} className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-xl">
           <div className="relative rounded-xl overflow-hidden bg-gray-900/50 border border-gray-800/50 hover:border-purple-500/50 hover:shadow-[0_20px_40px_rgba(139,92,246,0.3)] transition-all duration-300 transform hover:-translate-y-2">
         <div className="aspect-[2/3] bg-gray-900 relative overflow-hidden">
               <Image 

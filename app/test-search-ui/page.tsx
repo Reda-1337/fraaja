@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 export default function TestSearchUI() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
 

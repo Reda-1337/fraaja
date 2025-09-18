@@ -31,7 +31,7 @@ export default function FiltersBar({ type }: { type: 'movie' | 'tv' }) {
       if (v) url.searchParams.set(k, v)
       else url.searchParams.delete(k)
     }
-    router.push(url.pathname + '?' + url.searchParams.toString())
+    router.push(url.pathname + '?' + url.searchParams.toString() as any)
   }
 
   return (

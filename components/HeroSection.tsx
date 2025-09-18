@@ -126,7 +126,7 @@ export default function HeroSection({ items }: Props) {
 
             {/* Watch Button */}
             <Link
-              href={watchHref}
+              href={watchHref as any}
               className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

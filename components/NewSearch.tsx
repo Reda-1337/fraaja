@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function NewSearch() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState([])
+  const [searchResults, setSearchResults] = useState<any[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -100,7 +100,7 @@ export default function NewSearch() {
             return (
               <Link
                 key={`${mediaType}-${item.id}`}
-                href={`/${mediaType}/${item.id}`}
+                href={`/${mediaType}/${item.id}` as any}
                 className="block p-3 hover:bg-gray-800 border-b border-gray-800 last:border-b-0"
               >
                 <div className="flex items-center gap-3">

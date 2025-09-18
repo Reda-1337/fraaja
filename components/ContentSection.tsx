@@ -57,7 +57,7 @@ export default function ContentSection({ title, items, viewAllHref }: Props) {
           <h2 className="text-2xl font-bold text-white">{title}</h2>
         </div>
         <Link
-          href={viewAllHref}
+          href={viewAllHref as any}
           className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
         >
           View All →
@@ -108,7 +108,7 @@ export default function ContentSection({ title, items, viewAllHref }: Props) {
                 <MediaCard
                   id={item.id}
                   title={title}
-                  posterPath={item.poster_path}
+                  posterPath={item.poster_path || null}
                   year={year}
                   rating={rating}
                   mediaType={mediaType}

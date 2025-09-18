@@ -21,7 +21,7 @@ export default function Navigation() {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.href as any}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'

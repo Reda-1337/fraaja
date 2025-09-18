@@ -19,7 +19,7 @@ type Props = {
 }
 
 export default function WatchTvPage({ params }: Props) {
-  const [servers, setServers] = useState([])
+  const [servers, setServers] = useState<any[]>([])
   const [seasons, setSeasons] = useState<Season[]>([])
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(true)
