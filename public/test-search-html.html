@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Test - HTML Only</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 6px;
+        }
+        button {
+            padding: 12px 24px;
+            background: #7c3aed;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #6d28d9;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .logs {
+            background: #111;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .results {
+            background: #222;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .result-item {
+            background: #333;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Test - HTML Only</h1>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Type search query (e.g., 'batman')...">
+            <button id="searchButton">Search</button>
+        </div>
+        
+        <div class="logs" id="logs">
+            <div>Ready to test search functionality...</div>
+        </div>
+        
+        <div class="results" id="results">
+            <div>No results yet. Try searching for "batman" or "spider".</div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const logs = document.getElementById('logs');
+        const results = document.getElementById('results');
+        
+        let isLoading = false;
+        
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            logs.innerHTML += `<div>${logMessage}</div>`;
+            logs.scrollTop = logs.scrollHeight;
+            console.log(logMessage);
+        }
+        
+        function updateButton() {
+            const query = searchInput.value.trim();
+            searchButton.disabled = isLoading || query.length < 2;
+            searchButton.textContent = isLoading ? 'Searching...' : 'Search';
+        }
+        
+        async function performSearch() {
+            const query = searchInput.value.trim();
+            
+            addLog(`🔍 Starting search for: "${query}"`);
+            
+            if (query.length < 2) {
+                addLog('❌ Query too short');
+                return;
+            }
+            
+            isLoading = true;
+            updateButton();
+            addLog('⏳ Set loading to true');
+            
+            try {
+                addLog('📡 Making API request...');
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                addLog(`📊 Response status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addLog(`✅ Received ${data.results?.length || 0} results`);
+                    displayResults(data.results || []);
+                    addLog('💾 Results displayed');
+                } else {
+                    addLog(`❌ API error: ${response.status}`);
+                    displayResults([]);
+                }
+            } catch (error) {
+                addLog(`💥 Error: ${error.message}`);
+                displayResults([]);
+            } finally {
+                isLoading = false;
+                updateButton();
+                addLog('✅ Set loading to false');
+            }
+        }
+        
+        function displayResults(items) {
+            if (items.length === 0) {
+                results.innerHTML = '<div>No results found.</div>';
+                return;
+            }
+            
+            results.innerHTML = items.slice(0, 5).map(item => `
+                <div class="result-item">
+                    <div style="font-weight: bold; font-size: 16px;">${item.title || item.name}</div>
+                    <div style="font-size: 12px; color: #ccc; margin-top: 4px;">
+                        ${item.media_type} • ${item.release_date || item.first_air_date} • ⭐ ${item.vote_average?.toFixed(1) || 'N/A'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Event listeners
+        searchInput.addEventListener('input', () => {
+            addLog(`⌨️ Input changed: "${searchInput.value}" (${searchInput.value.length} chars)`);
+            updateButton();
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            addLog(`🔑 Key pressed: ${e.key}`);
+            if (e.key === 'Enter') {
+                addLog('⏎ Enter key - starting search');
+                performSearch();
+            }
+        });
+        
+        searchButton.addEventListener('click', () => {
+            addLog('🖱️ Button clicked - starting search');
+            performSearch();
+        });
+        
+        // Initial setup
+        addLog('🚀 Page loaded and ready');
+        updateButton();
+    </script>
+</body>
+</html>
