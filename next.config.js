@@ -1,4 +1,31 @@
-/** @type {import('next').NextConfig} */
+﻿/** @type {import('next').NextConfig} */
+function parseOrigins(value) {
+  return (value || '')
+    .split(/[\s,]+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .join(' ')
+}
+
+const DEFAULT_IFRAME_ORIGINS = [
+  'https://vidsrc.to',
+  'https://*.vidsrc.to',
+  'https://vidsrc.vip',
+  'https://*.vidsrc.vip',
+  'https://vidsrc.xyz',
+  'https://*.vidsrc.xyz',
+  'https://vidlink.pro',
+  'https://*.vidlink.pro',
+  'https://vidnest.fun',
+  'https://*.vidnest.fun',
+  'https://multiembed.mov',
+  'https://*.multiembed.mov',
+  'https://autoembed.to',
+  'https://*.autoembed.to',
+  'https://cloudnestra.com',
+  'https://*.cloudnestra.com'
+].join(',')
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -7,15 +34,11 @@ const nextConfig = {
       { protocol: 'https', hostname: 'via.placeholder.com' }
     ]
   },
-  experimental: {
-    typedRoutes: true
-  },
   async headers() {
-    const allowedFrames = (process.env.ALLOWED_IFRAME_ORIGINS || 'https://vidnest.fun')
-      .split(',')
-      .map((s) => s.trim())
+    const rawOrigins = [DEFAULT_IFRAME_ORIGINS, process.env.ALLOWED_IFRAME_ORIGINS]
       .filter(Boolean)
-      .join(' ')
+      .join(',')
+    const allowedFrames = parseOrigins(rawOrigins)
 
     const csp = [
       "default-src 'self'",
@@ -36,7 +59,6 @@ const nextConfig = {
       }
     ]
   }
-};
+}
 
-module.exports = nextConfig;
-
+module.exports = nextConfig

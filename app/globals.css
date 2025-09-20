@@ -8,6 +8,36 @@
   box-sizing: border-box;
 }
 
+:root {
+  color-scheme: dark;
+  --glass-border: rgba(148, 163, 184, 0.08);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-hover: rgba(30, 41, 59, 0.8);
+}
+
+body {
+  min-height: 100vh;
+  background-color: #03040a;
+  background-image:
+    radial-gradient(circle at top left, rgba(8, 47, 73, 0.55), transparent 55%),
+    radial-gradient(circle at top right, rgba(76, 29, 149, 0.4), transparent 45%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.85) 65%, #020617 100%);
+  background-attachment: fixed;
+  color: #e2e8f0;
+}
+
+.glass-panel {
+  @apply bg-slate-900/60 backdrop-blur-xl border border-slate-700/40 shadow-[0_20px_60px_rgba(15,23,42,0.4)] rounded-3xl;
+}
+
+.glass-card {
+  @apply bg-slate-900/50 backdrop-blur-lg border border-slate-700/30 shadow-[0_12px_30px_rgba(8,47,73,0.35)] rounded-2xl;
+}
+
+.badge-pill {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

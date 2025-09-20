@@ -1,6 +1,6 @@
-"use client"
+﻿"use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 type Genre = { id: number; name: string }
@@ -12,8 +12,23 @@ export default function FiltersBar({ type }: { type: 'movie' | 'tv' }) {
   const [years, setYears] = useState<string[]>([])
 
   const currentGenre = params.get('with_genres') || ''
-  const currentYear = params.get(type === 'movie' ? 'year' : 'year') || ''
+  const currentYear = params.get('year') || ''
   const currentSort = params.get('sort_by') || 'popularity.desc'
+
+  const sortOptions = useMemo(() => {
+    if (type === 'movie') {
+      return [
+        { value: 'popularity.desc', label: 'Popularity' },
+        { value: 'vote_average.desc', label: 'Rating' },
+        { value: 'primary_release_date.desc', label: 'Newest' }
+      ]
+    }
+    return [
+      { value: 'popularity.desc', label: 'Popularity' },
+      { value: 'vote_average.desc', label: 'Rating' },
+      { value: 'first_air_date.desc', label: 'Newest' }
+    ]
+  }, [type])
 
   useEffect(() => {
     fetch('/api/filters')
@@ -31,13 +46,14 @@ export default function FiltersBar({ type }: { type: 'movie' | 'tv' }) {
       if (v) url.searchParams.set(k, v)
       else url.searchParams.delete(k)
     }
-    router.push(url.pathname + '?' + url.searchParams.toString() as any)
+    url.searchParams.delete('page')
+    router.push(url.pathname + (url.searchParams.toString() ? `?${url.searchParams.toString()}` : '') as any)
   }
 
   return (
-    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3">
       <select
-        className="bg-gray-800 border border-gray-700 rounded px-3 py-2"
+        className="rounded px-3 py-2 border border-gray-700 bg-gray-800"
         value={currentGenre}
         onChange={(e) => updateQuery({ with_genres: e.target.value })}
       >
@@ -48,7 +64,7 @@ export default function FiltersBar({ type }: { type: 'movie' | 'tv' }) {
       </select>
 
       <select
-        className="bg-gray-800 border border-gray-700 rounded px-3 py-2"
+        className="rounded px-3 py-2 border border-gray-700 bg-gray-800"
         value={currentYear}
         onChange={(e) => updateQuery({ year: e.target.value })}
       >
@@ -59,16 +75,14 @@ export default function FiltersBar({ type }: { type: 'movie' | 'tv' }) {
       </select>
 
       <select
-        className="bg-gray-800 border border-gray-700 rounded px-3 py-2"
+        className="rounded px-3 py-2 border border-gray-700 bg-gray-800"
         value={currentSort}
         onChange={(e) => updateQuery({ sort_by: e.target.value })}
       >
-        <option value="popularity.desc">Popularity</option>
-        <option value="vote_average.desc">Rating</option>
-        <option value="primary_release_date.desc">Newest</option>
+        {sortOptions.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
       </select>
     </div>
   )
 }
-
-

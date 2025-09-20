@@ -20,98 +20,97 @@ type Props = {
   items: ContentItem[]
   viewAllHref: string
   icon?: string
+  subtitle?: string
 }
 
-export default function ContentSection({ title, items, viewAllHref, icon }: Props) {
+export default function ContentSection({ title, items, viewAllHref, icon, subtitle }: Props) {
   const [scrollPosition, setScrollPosition] = useState(0)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
+  if (items.length === 0) return null
+
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollContainerRef.current) return
-    
+
     const container = scrollContainerRef.current
-    const scrollAmount = 400
-    const newPosition = direction === 'left' 
-      ? scrollPosition - scrollAmount 
-      : scrollPosition + scrollAmount
-    
-    container.scrollTo({
-      left: newPosition,
-      behavior: 'smooth'
-    })
+    const scrollAmount = 420
+    const newPosition = direction === 'left' ? scrollPosition - scrollAmount : scrollPosition + scrollAmount
+
+    container.scrollTo({ left: newPosition, behavior: 'smooth' })
     setScrollPosition(newPosition)
   }
 
-  if (items.length === 0) return null
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'ArrowLeft') scroll('left')
-    if (e.key === 'ArrowRight') scroll('right')
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowLeft') scroll('left')
+    if (event.key === 'ArrowRight') scroll('right')
   }
 
   return (
-    <div className="relative">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-6 px-4">
-        <div className="flex items-center gap-3">
-          <div className="w-1 h-8 bg-gradient-to-b from-purple-500 to-blue-500 rounded-full" />
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            {icon && <span className="text-2xl">{icon}</span>}
-            {title}
-          </h2>
+    <section className="space-y-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+              {icon ?? '*'}
+            </span>
+            <div>
+              <h2 className="text-2xl font-semibold text-white">{title}</h2>
+              {subtitle && <p className="text-sm text-slate-400">{subtitle}</p>}
+            </div>
+          </div>
         </div>
+
         <Link
           href={viewAllHref as any}
-          className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-300 transition hover:border-cyan-400/60 hover:text-white"
         >
-          View All →
+          View All
+          <span className="text-cyan-400">➜</span>
         </Link>
       </div>
 
-      {/* Scrollable Content */}
       <div className="relative">
-        {/* Left Scroll Button */}
         {scrollPosition > 0 && (
           <button
+            type="button"
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black/90 backdrop-blur-sm rounded-full p-3 text-white transition-all duration-300 shadow-lg"
+            className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full border border-slate-700/60 bg-slate-900/80 p-3 text-white shadow-[0_10px_30px_rgba(8,47,73,0.5)] transition hover:-translate-x-1 hover:border-cyan-400/60"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/>
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
         )}
 
-        {/* Right Scroll Button */}
         <button
+          type="button"
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black/90 backdrop-blur-sm rounded-full p-3 text-white transition-all duration-300 shadow-lg"
+          className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full border border-slate-700/60 bg-slate-900/80 p-3 text-white shadow-[0_10px_30px_rgba(8,47,73,0.5)] transition hover:translate-x-1 hover:border-cyan-400/60"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
-        {/* Content Grid */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide px-4 pb-4 scroll-smooth snap-x snap-mandatory"
+          className="flex gap-4 overflow-x-auto px-2 pb-1 scrollbar-hide"
           tabIndex={0}
           onKeyDown={onKeyDown}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {items.map((item) => {
-            const title = item.title || item.name || 'Untitled'
+            const displayTitle = item.title || item.name || 'Untitled'
             const mediaType = item.media_type || (item.name ? 'tv' : 'movie')
             const date = item.release_date || item.first_air_date || ''
             const year = date ? date.slice(0, 4) : ''
-            const rating = item.vote_average || 0
+            const rating = typeof item.vote_average === 'number' ? item.vote_average : 0
 
             return (
-              <div key={`${mediaType}-${item.id}`} className="flex-shrink-0 w-48 snap-start">
+              <div key={`${mediaType}-${item.id}`} className="w-48 flex-shrink-0">
                 <MediaCard
                   id={item.id}
-                  title={title}
+                  title={displayTitle}
                   posterPath={item.poster_path || null}
                   year={year}
                   rating={rating}
@@ -122,6 +121,6 @@ export default function ContentSection({ title, items, viewAllHref, icon }: Prop
           })}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

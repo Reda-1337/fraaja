@@ -3,7 +3,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Play, Star, Calendar, Info, ChevronLeft, ChevronRight, Pause, Volume2, VolumeX, Heart, Share2 } from 'lucide-react'
+import {
+  Play,
+  Star,
+  Calendar,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Volume2,
+  VolumeX,
+  Heart,
+  Share2
+} from 'lucide-react'
 
 type HeroItem = {
   id: number
@@ -29,20 +41,18 @@ export default function EnhancedHeroSection({ items }: Props) {
   const [isMuted, setIsMuted] = useState(true)
   const [isFavorited, setIsFavorited] = useState(false)
 
-  const heroItems = items.slice(0, 5)
+  const heroItems = items.slice(0, 6)
 
-  // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying || heroItems.length <= 1 || isHovered) return
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % heroItems.length)
-    }, 6000)
+    }, 6500)
 
     return () => clearInterval(interval)
   }, [isAutoPlaying, heroItems.length, isHovered])
 
-  // Navigation functions
   const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + heroItems.length) % heroItems.length)
   }, [heroItems.length])
@@ -55,32 +65,13 @@ export default function EnhancedHeroSection({ items }: Props) {
     setCurrentIndex(index)
   }, [])
 
-  const toggleAutoPlay = useCallback(() => {
-    setIsAutoPlaying(prev => !prev)
-  }, [])
-
-  const toggleMute = useCallback(() => {
-    setIsMuted(prev => !prev)
-  }, [])
-
-  const toggleFavorite = useCallback(() => {
-    setIsFavorited(prev => !prev)
-  }, [])
+  const toggleAutoPlay = () => setIsAutoPlaying((prev) => !prev)
+  const toggleMute = () => setIsMuted((prev) => !prev)
+  const toggleFavorite = () => setIsFavorited((prev) => !prev)
 
   if (heroItems.length === 0) {
     return (
-      <div className="relative h-[80vh] bg-gradient-to-br from-gray-900 via-black to-gray-900">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-4 text-gray-600">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
-            <p className="text-gray-400 text-xl">No featured content available</p>
-          </div>
-        </div>
-      </div>
+      <div className="relative h-[70vh] rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950/80" />
     )
   }
 
@@ -90,166 +81,147 @@ export default function EnhancedHeroSection({ items }: Props) {
   const year = date ? date.slice(0, 4) : ''
   const mediaType = currentItem.media_type || (currentItem.name ? 'tv' : 'movie')
   const rating = currentItem.vote_average ? currentItem.vote_average.toFixed(1) : 'N/A'
-  const watchHref = mediaType === 'movie' 
-    ? `/watch/movie/${currentItem.id}` 
-    : `/watch/tv/${currentItem.id}/1/1`
+  const watchHref = mediaType === 'movie' ? `/watch/movie/${currentItem.id}` : `/watch/tv/${currentItem.id}/1/1`
 
   return (
-    <div 
-      className="relative h-[80vh] overflow-hidden group"
+    <section
+      className="relative h-[80vh] overflow-hidden rounded-[32px] border border-slate-800/40 shadow-[0_45px_120px_rgba(8,47,73,0.45)]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Background Image */}
       <div className="absolute inset-0">
         {currentItem.backdrop_path ? (
           <Image
             src={`https://image.tmdb.org/t/p/original${currentItem.backdrop_path}`}
             alt={title}
             fill
-            className="object-cover transition-all duration-1000"
             priority
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
+            className="object-cover"
+            onError={(event) => {
+              const target = event.target as HTMLImageElement
               target.style.display = 'none'
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900" />
+          <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950" />
         )}
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/30 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,_rgba(56,189,248,0.28),_transparent_55%)]" />
       </div>
 
-      {/* Navigation Arrows */}
       {heroItems.length > 1 && (
         <>
           <button
+            type="button"
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+            className="absolute left-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700/60 bg-slate-950/80 text-white opacity-0 transition hover:-translate-x-1 hover:border-cyan-400/60 group-hover:opacity-100"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
-          
+
           <button
+            type="button"
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+            className="absolute right-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-slate-700/60 bg-slate-950/80 text-white opacity-0 transition hover:translate-x-1 hover:border-cyan-400/60 group-hover:opacity-100"
           >
-            <ChevronRight className="w-6 h-6 text-white" />
+            <ChevronRight className="h-6 w-6" />
           </button>
         </>
       )}
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex items-end">
-        <div className="container mx-auto px-6 pb-20">
-          <div className="max-w-3xl">
-            {/* Media Type Badge */}
-            <div className="mb-4">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                mediaType === 'movie' 
-                  ? 'bg-blue-600/20 text-blue-400 border border-blue-600/30' 
-                  : 'bg-purple-600/20 text-purple-400 border border-purple-600/30'
-              }`}>
-                {mediaType === 'movie' ? '🎬 Movie' : '📺 TV Show'}
+      <div className="relative z-10 flex h-full items-end">
+        <div className="mx-auto w-full max-w-7xl px-8 pb-16">
+          <div className="glass-panel rounded-[28px] border border-slate-800/30 bg-slate-950/70 p-8 backdrop-blur-xl">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.35em] text-slate-300/80">
+              <span className="rounded-full bg-slate-900/70 px-3 py-1 text-slate-200">{mediaType === 'movie' ? 'Movie' : 'TV Series'}</span>
+              {year && <span className="rounded-full bg-slate-900/60 px-3 py-1 text-slate-300">{year}</span>}
+              <span className="inline-flex items-center gap-2 rounded-full bg-slate-900/60 px-3 py-1 text-amber-300">
+                <Star className="h-4 w-4" />
+                {rating}
               </span>
             </div>
 
-            {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
-              {title}
-            </h1>
-
-            {/* Meta Information */}
-            <div className="flex items-center gap-6 mb-6 text-lg">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-400" />
-                <span className="text-white font-semibold">{rating}</span>
+            <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-3xl space-y-6">
+                <h1 className="text-4xl font-bold text-white drop-shadow-lg sm:text-5xl md:text-6xl">
+                  {title}
+                </h1>
+                {currentItem.overview && (
+                  <p className="text-base text-slate-300 md:text-lg md:leading-relaxed">
+                    {currentItem.overview}
+                  </p>
+                )}
               </div>
-              
-              {year && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-300">{year}</span>
+
+              <div className="flex flex-shrink-0 items-center gap-3">
+                <div className="flex flex-col items-start gap-3 md:flex-row">
+                  <Link
+                    href={watchHref as any}
+                    className="inline-flex items-center gap-3 rounded-full bg-cyan-500 px-7 py-3 text-sm font-semibold text-slate-950 shadow-[0_18px_45px_rgba(6,182,212,0.45)] transition hover:-translate-y-0.5 hover:bg-cyan-400"
+                  >
+                    <Play className="h-5 w-5" />
+                    Watch Now
+                  </Link>
+
+                  <button
+                    onClick={toggleFavorite}
+                    className={`inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition ${
+                      isFavorited
+                        ? 'border-rose-500 bg-rose-500/10 text-rose-300'
+                        : 'border-slate-700/70 bg-slate-900/70 text-slate-200 hover:border-cyan-400/60 hover:text-white'
+                    }`}
+                  >
+                    <Heart className={`h-5 w-5 ${isFavorited ? 'fill-current' : ''}`} />
+                    Watchlist
+                  </button>
                 </div>
-              )}
-            </div>
 
-            {/* Overview */}
-            {currentItem.overview && (
-              <p className="text-gray-300 text-lg mb-8 leading-relaxed max-w-2xl line-clamp-3">
-                {currentItem.overview}
-              </p>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-4">
-              <Link
-                href={watchHref as any}
-                className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-white/25"
-              >
-                <Play className="w-6 h-6" />
-                Watch Now
-              </Link>
-
-              <button
-                onClick={toggleFavorite}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                  isFavorited 
-                    ? 'bg-red-600 border-red-600 text-white' 
-                    : 'bg-transparent border-gray-400 text-gray-400 hover:border-white hover:text-white'
-                }`}
-              >
-                <Heart className={`w-6 h-6 ${isFavorited ? 'fill-current' : ''}`} />
-              </button>
-
-              <button className="p-4 rounded-xl bg-transparent border-2 border-gray-400 text-gray-400 hover:border-white hover:text-white transition-all duration-300">
-                <Share2 className="w-6 h-6" />
-              </button>
-
-              <button className="p-4 rounded-xl bg-transparent border-2 border-gray-400 text-gray-400 hover:border-white hover:text-white transition-all duration-300">
-                <Info className="w-6 h-6" />
-              </button>
+                <button className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-700/70 bg-slate-900/70 text-slate-300 transition hover:-translate-y-0.5 hover:border-cyan-400/60 hover:text-white">
+                  <Share2 className="h-5 w-5" />
+                </button>
+                <button className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-700/70 bg-slate-900/70 text-slate-300 transition hover:-translate-y-0.5 hover:border-cyan-400/60 hover:text-white">
+                  <Info className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
+      <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
         <button
+          type="button"
           onClick={toggleMute}
-          className="p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-200"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700/70 bg-slate-950/80 text-white transition hover:border-cyan-400/60"
         >
-          {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
+          {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
         </button>
-
         <button
+          type="button"
           onClick={toggleAutoPlay}
-          className="p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-200"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700/70 bg-slate-950/80 text-white transition hover:border-cyan-400/60"
         >
-          {isAutoPlaying ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white" />}
+          {isAutoPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
       </div>
 
-      {/* Dots Indicator */}
       {heroItems.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
           {heroItems.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex 
-                  ? 'bg-white scale-125' 
-                  : 'bg-white/50 hover:bg-white/75'
+              className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                index === currentIndex ? 'scale-125 bg-cyan-400' : 'bg-white/40 hover:bg-white/70'
               }`}
             />
           ))}
         </div>
       )}
-    </div>
+    </section>
   )
 }
+

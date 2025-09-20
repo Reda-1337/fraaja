@@ -12,7 +12,7 @@ type SearchResult = {
   release_date?: string
   first_air_date?: string
   vote_average?: number
-  media_type?: 'movie' | 'tv'
+  media_type?: 'movie' | 'tv' | 'person'
   overview?: string
 }
 
@@ -23,6 +23,7 @@ export default function EnhancedSearch() {
   const [hasSearched, setHasSearched] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [error, setError] = useState<string | null>(null)
   
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -33,26 +34,33 @@ export default function EnhancedSearch() {
     if (query.trim().length < 2) {
       setSearchResults([])
       setHasSearched(false)
+      setError(null)
       return
     }
 
     setIsSearching(true)
     setHasSearched(true)
+    setError(null)
 
     try {
       const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
       
       if (response.ok) {
         const data = await response.json()
-        setSearchResults(data.results || [])
-        setShowDropdown(true)
+        const sanitized = Array.isArray(data.results)
+          ? (data.results as SearchResult[]).filter((item) => item.media_type !== 'person')
+          : []
+        setSearchResults(sanitized)
+        setShowDropdown(sanitized.length > 0)
       } else {
         console.error('Search failed:', response.status)
         setSearchResults([])
+        setError('Search request failed. Try again later.')
       }
     } catch (error) {
       console.error('Search error:', error)
       setSearchResults([])
+      setError('Unable to reach search service.')
     } finally {
       setIsSearching(false)
     }
@@ -115,6 +123,7 @@ export default function EnhancedSearch() {
     setHasSearched(false)
     setShowDropdown(false)
     setSelectedIndex(-1)
+    setError(null)
     inputRef.current?.focus()
   }
 
@@ -152,11 +161,11 @@ export default function EnhancedSearch() {
   const getItemType = (item: SearchResult) => item.media_type || (item.name ? 'tv' : 'movie')
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full">
       {/* Search Input */}
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+          <Search className="h-5 w-5 text-slate-400" />
         </div>
         
         <input
@@ -166,30 +175,32 @@ export default function EnhancedSearch() {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
-          placeholder="Search movies and TV shows..."
-          className="w-full pl-12 pr-12 py-3 bg-gray-800/50 backdrop-blur-sm text-white border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+          placeholder="Search movies, TV shows, genres..."
+          className="w-full rounded-2xl border border-slate-700/60 bg-slate-900/70 py-3 pl-12 pr-14 text-sm text-slate-100 shadow-[0_10px_30px_rgba(8,47,73,0.35)] transition focus:border-cyan-400/70 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 placeholder:text-slate-500"
         />
         
         {searchTerm && (
           <button
             onClick={clearSearch}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors"
+            className="absolute inset-y-0 right-10 flex items-center text-slate-400 transition hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         )}
         
         {isSearching && (
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <Loader2 className="h-5 w-5 text-purple-400 animate-spin" />
+          <div className="absolute inset-y-0 right-3 flex items-center">
+            <Loader2 className="h-5 w-5 animate-spin text-cyan-300" />
           </div>
         )}
       </div>
 
       {/* Search Status */}
       {hasSearched && !isSearching && (
-        <div className="mt-2 text-sm text-gray-400 px-1">
-          {searchResults.length > 0 ? (
+        <div className="mt-2 px-1 text-xs text-slate-400">
+          {error ? (
+            <span className="text-rose-400">{error}</span>
+          ) : searchResults.length > 0 ? (
             <span>Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}</span>
           ) : searchTerm.trim().length >= 2 ? (
             <span>No results found for "{searchTerm}"</span>
@@ -201,7 +212,7 @@ export default function EnhancedSearch() {
       {showDropdown && searchResults.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl max-h-96 overflow-y-auto z-50"
+          className="absolute top-[calc(100%+0.75rem)] left-0 right-0 z-50 max-h-96 overflow-y-auto rounded-3xl border border-slate-800/40 bg-slate-950/85 backdrop-blur-2xl shadow-[0_30px_70px_rgba(8,47,73,0.55)]"
         >
           {searchResults.slice(0, 8).map((item, index) => {
             const title = getItemTitle(item)
@@ -214,14 +225,14 @@ export default function EnhancedSearch() {
               <Link
                 key={`${mediaType}-${item.id}`}
                 href={`/${mediaType}/${item.id}`}
-                className={`block p-4 hover:bg-gray-800/50 border-b border-gray-800/50 last:border-b-0 transition-colors ${
-                  isSelected ? 'bg-gray-800/50' : ''
+                className={`block border-b border-slate-800/30 p-4 transition-colors last:border-b-0 ${
+                  isSelected ? 'bg-slate-900/60' : 'hover:bg-slate-900/40'
                 }`}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="flex items-center gap-4">
                   {/* Poster */}
-                  <div className="w-16 h-20 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="flex h-20 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-900">
                     {item.poster_path ? (
                       <img
                         src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
@@ -234,39 +245,39 @@ export default function EnhancedSearch() {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-full flex items-center justify-center ${item.poster_path ? 'hidden' : ''}`}>
-                      <Play className="w-6 h-6 text-gray-400" />
+                    <div className={`flex h-full w-full items-center justify-center ${item.poster_path ? 'hidden' : ''}`}>
+                      <Play className="h-6 w-6 text-slate-500" />
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate text-lg">{title}</h3>
+                    <h3 className="truncate text-sm font-semibold text-white">{title}</h3>
                     
-                    <div className="flex items-center gap-3 mt-1 text-sm text-gray-400">
-                      <span className={`capitalize px-2 py-1 rounded-full text-xs font-medium ${
+                    <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+                      <span className={`capitalize rounded-full px-2 py-1 text-[10px] font-semibold tracking-wide ${
                         mediaType === 'movie' 
-                          ? 'bg-blue-600/20 text-blue-400' 
-                          : 'bg-purple-600/20 text-purple-400'
+                          ? 'bg-cyan-500/15 text-cyan-200' 
+                          : 'bg-purple-500/15 text-purple-200'
                       }`}>
                         {mediaType}
                       </span>
                       
                       {year && (
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
+                        <div className="flex items-center gap-1 text-slate-300">
+                          <Calendar className="h-3 w-3" />
                           <span>{year}</span>
                         </div>
                       )}
                       
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-yellow-400" />
+                      <div className="flex items-center gap-1 text-amber-300">
+                        <Star className="h-3 w-3" />
                         <span>{rating}</span>
                       </div>
                     </div>
 
                     {item.overview && (
-                      <p className="text-gray-500 text-sm mt-2 line-clamp-2">
+                      <p className="mt-2 line-clamp-2 text-xs text-slate-400">
                         {item.overview}
                       </p>
                     )}

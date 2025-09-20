@@ -2,22 +2,25 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { TrendingUp, Film, Tv } from 'lucide-react'
 
 const navItems = [
-  { href: '/', label: 'Trending', icon: '🔥' },
-  { href: '/movies', label: 'Movies', icon: '🎬' },
-  { href: '/tv', label: 'TV Shows', icon: '📺' },
+  { href: '/', label: 'Trending', Icon: TrendingUp },
+  { href: '/movies', label: 'Movies', Icon: Film },
+  { href: '/tv', label: 'TV Shows', Icon: Tv }
 ]
 
 export default function Navigation() {
   const pathname = usePathname()
-  
+
   return (
     <nav className="border-b border-gray-800/50 backdrop-blur-sm bg-black/20">
       <div className="container mx-auto px-4 py-3">
         <div className="flex gap-2 overflow-x-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href
+            const Icon = item.Icon
+
             return (
               <Link
                 key={item.href}
@@ -28,7 +31,7 @@ export default function Navigation() {
                     : 'bg-gray-800/30 text-gray-300 hover:bg-gray-700/50 hover:text-white border border-gray-700/50'
                 }`}
               >
-                <span className="text-sm">{item.icon}</span>
+                <Icon className="w-4 h-4" />
                 <span className="font-medium">{item.label}</span>
               </Link>
             )

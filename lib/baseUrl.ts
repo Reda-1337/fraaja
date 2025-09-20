@@ -5,8 +5,10 @@ export function getBaseUrl() {
     const hasProtocol = explicit.startsWith('http://') || explicit.startsWith('https://')
     return hasProtocol ? explicit : `https://${explicit}`
   }
-  // Fallback for local dev - use port 3001
-  return 'http://localhost:3001'
+  // In Next.js RSC route/app handlers, headers() exposes host and protocol.
+  // We avoid importing next/headers here to keep this a plain util; callers should pass absolute when needed.
+  // Fallback for local dev - use port 3000
+  return 'http://localhost:3000'
 }
 
 

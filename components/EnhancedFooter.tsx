@@ -41,11 +41,9 @@ export default function EnhancedFooter() {
   ]
 
   return (
-    <footer className="bg-gradient-to-t from-gray-900 via-black to-gray-900 border-t border-gray-800/50">
-      <div className="container mx-auto px-6 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          {/* Brand Section */}
+    <footer className="mt-16 border-t border-slate-800/40 bg-[radial-gradient(circle_at_bottom,_rgba(14,165,233,0.18),_transparent_45%),_linear-gradient(180deg,_rgba(2,6,23,0.95)_0%,_rgba(2,6,23,1)_100%)]">
+      <div className="mx-auto w-full max-w-7xl px-6 py-14">
+        <div className="grid grid-cols-1 gap-8 border-b border-slate-800/40 pb-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4 group">
               <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
@@ -56,7 +54,7 @@ export default function EnhancedFooter() {
               </h3>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Discover and stream your favorite movies and TV shows with our modern, 
+              Discover and stream your favorite movies and TV shows with our modern,
               user-friendly platform powered by TMDB.
             </p>
             <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -65,13 +63,12 @@ export default function EnhancedFooter() {
             </div>
           </div>
 
-          {/* Movies */}
           <div>
             <h4 className="text-white font-semibold text-lg mb-4">Movies</h4>
             <ul className="space-y-3">
               {footerLinks.movies.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href as any}
                     className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group"
                   >
@@ -83,13 +80,12 @@ export default function EnhancedFooter() {
             </ul>
           </div>
 
-          {/* TV Shows */}
           <div>
             <h4 className="text-white font-semibold text-lg mb-4">TV Shows</h4>
             <ul className="space-y-3">
               {footerLinks.tv.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href as any}
                     className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group"
                   >
@@ -101,13 +97,12 @@ export default function EnhancedFooter() {
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h4 className="text-white font-semibold text-lg mb-4">Support</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href as any}
                     className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group"
                   >
@@ -119,13 +114,12 @@ export default function EnhancedFooter() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h4 className="text-white font-semibold text-lg mb-4">Legal</h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href as any}
                     className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group"
                   >
@@ -138,8 +132,21 @@ export default function EnhancedFooter() {
           </div>
         </div>
 
-        {/* Social Links */}
-        <div className="border-t border-gray-800/50 pt-8">
+        <div className="flex flex-col items-center justify-center gap-4 border-b border-slate-800/40 py-10 text-center">
+          <span className="text-xs uppercase tracking-[0.5em] text-cyan-300">Join the universe</span>
+          <h3 className="text-3xl font-bold text-white">Experience stories that light up the dark</h3>
+          <Link
+            href="/" className="inline-flex items-center rounded-full bg-cyan-500 px-8 py-3 text-sm font-semibold text-slate-900 shadow-[0_18px_45px_rgba(6,182,212,0.45)] transition hover:-translate-y-0.5 hover:bg-cyan-400"
+          >
+            RedaStream+
+          </Link>
+          <p className="max-w-2xl text-xs text-slate-500">
+            This platform is a demo experience. We do not host any media files; all content references TMDB data and
+            third-party providers.
+          </p>
+        </div>
+
+        <div className="pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-6">
               <span className="text-gray-400 text-sm">Follow us:</span>
@@ -163,12 +170,8 @@ export default function EnhancedFooter() {
             </div>
 
             <div className="text-center md:text-right">
-              <p className="text-gray-500 text-sm">
-                © {currentYear} RedaStream. All rights reserved.
-              </p>
-              <p className="text-gray-600 text-xs mt-1">
-                Powered by TMDB • Built with Next.js & Tailwind CSS
-              </p>
+              <p className="text-gray-500 text-sm">Copyright {currentYear} RedaStream. All rights reserved.</p>
+              <p className="text-gray-600 text-xs mt-1">Powered by TMDB - Built with Next.js & Tailwind CSS</p>
             </div>
           </div>
         </div>
